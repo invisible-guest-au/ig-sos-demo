@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sense Of Self - Guest Feedback</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #E8E6E3;
+            --surface: #F5F4F2;
+            --text: #181513;
+            --muted: #6E6862;
+            --border: #C8C3BE;
+            --primary: #593327;
+            --primaryHover: #6B3D2E;
+            --secondary: #778988;
+            --focus: #CEB29F;
+            --star-empty: #C8C3BE;
+            --star-filled: #593327;
+            --success: #5A7A6B;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, .serif {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+        }
+        
+        .frank-logo {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 100;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+        
+        .frank-logo:hover {
+            opacity: 1;
+        }
+        
+        .frank-logo img {
+            height: 20px;
+            width: auto;
+        }
+        
+        .container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px 40px;
+        }
+        
+        .card {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 40px 32px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 4px 24px rgba(24, 21, 19, 0.06);
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .logo-container img {
+            max-width: 180px;
+            height: auto;
+        }
+        
+        .tagline {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            color: var(--muted);
+            font-size: 1.1rem;
+            margin-top: 12px;
+            letter-spacing: 0.02em;
+        }
+        
+        .staff-badge {
+            background: linear-gradient(135deg, var(--focus) 0%, #E5D4C6 100%);
+            padding: 20px 24px;
+            border-radius: 16px;
+            margin: 24px 0;
+            text-align: center;
+        }
+        
+        .staff-badge-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+        
+        .staff-badge-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .staff-badge-venue {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primaryHover);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+        
+        .btn-secondary:hover {
+            background: #B8B3AE;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: #fff;
+        }
+        
+        .btn-success:hover {
+            background: #4A6A5B;
+        }
+        
+        .demo-note {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        
+        /* Form Styles */
+        .form-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .form-header h2 {
+            font-size: 1.75rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .form-header p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+        
+        .form-header .staff-note {
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+        
+        .ratings-section {
+            background: linear-gradient(180deg, rgba(206, 178, 159, 0.15) 0%, rgba(206, 178, 159, 0.05) 100%);
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin-bottom: 24px;
+        }
+        
+        .ratings-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+        
+        .rating-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .rating-row:last-child {
+            border-bottom: none;
+        }
+        
+        .rating-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            flex: 1;
+            padding-right: 12px;
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .star {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--star-empty);
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        
+        .star.filled {
+            color: var(--star-filled);
+        }
+        
+        .star:hover {
+            transform: scale(1.15);
+        }
+        
+        @media (min-width: 640px) {
+            .star {
+                font-size: 1.75rem;
+            }
+            .star-rating {
+                gap: 6px;
+            }
+        }
+        
+        /* Stacked rating for overall question */
+        .rating-stacked {
+            text-align: center;
+            padding: 16px 0 8px;
+        }
+        
+        .rating-stacked .rating-label {
+            display: block;
+            margin-bottom: 12px;
+            padding-right: 0;
+            font-size: 0.95rem;
+        }
+        
+        .rating-stacked .star-rating {
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .rating-stacked .star {
+            font-size: 2rem;
+        }
+        
+        /* Textarea */
+        .feedback-section {
+            margin-bottom: 24px;
+        }
+        
+        .feedback-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        
+        .feedback-textarea {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            resize: none;
+            background: #fff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .feedback-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(89, 51, 39, 0.1);
+        }
+        
+        .feedback-textarea::placeholder {
+            color: var(--muted);
+        }
+        
+        .feedback-prominent {
+            background: rgba(89, 51, 39, 0.05);
+            border-color: var(--primary);
+        }
+        
+        /* Thank you / Google prompt pages */
+        .result-icon {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .result-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.75rem;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .result-text {
+            color: var(--muted);
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        
+        .result-highlight {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .button-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        /* Contact form */
+        .contact-form {
+            text-align: left;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            background: #fff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(89, 51, 39, 0.1);
+        }
+        
+        .form-group input::placeholder {
+            color: var(--muted);
+        }
+        
+        .success-message {
+            background: rgba(90, 122, 107, 0.1);
+            border: 1px solid var(--success);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .success-message p {
+            color: var(--success);
+            font-weight: 500;
+        }
+        
+        .divider {
+            border-top: 1px solid var(--border);
+            margin: 24px 0;
+            padding-top: 24px;
+        }
+        
+        .return-note {
+            font-size: 0.9rem;
+            color: var(--muted);
+            text-align: center;
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+        
+        /* Wave decoration */
+        .wave-decoration {
+            text-align: center;
+            margin: 16px 0;
+            color: var(--border);
+            font-size: 1.5rem;
+            letter-spacing: 0.3em;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            animation: fadeIn 0.4s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://frankpr.co" target="_blank" rel="noopener" class="frank-logo">
+        <img src="Frank_Custom.png" alt="Frank">
+    </a>
+    
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Default settings
+        const DEFAULT_SETTINGS = {
+            venueName: 'Sense Of Self',
+            googleReviewUrl: 'https://search.google.com/local/writereview?placeid=ChIJ0x_WD-Np1moRNcXu8YsL8-w',
+            reviewThreshold: 4.0,
+            questions: [
+                { key: 'facilities', label: 'Facilities & ritual flow' },
+                { key: 'cleanliness', label: 'Cleanliness & comfort' },
+                { key: 'staff', label: 'Staff care & guidance' },
+                { key: 'atmosphere', label: 'Atmosphere & ability to unwind' },
+                { key: 'overall', label: 'Overall experience', stacked: true }
+            ]
+        };
+
+        // Load settings from localStorage
+        const getSettings = () => {
+            try {
+                const stored = localStorage.getItem('sos_settings');
+                if (stored) {
+                    return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+                }
+            } catch (e) {
+                console.error('Error loading settings:', e);
+            }
+            return DEFAULT_SETTINGS;
+        };
+
+        // Save response to localStorage
+        const saveResponse = (response) => {
+            try {
+                const stored = localStorage.getItem('sos_responses');
+                const responses = stored ? JSON.parse(stored) : [];
+                responses.push(response);
+                localStorage.setItem('sos_responses', JSON.stringify(responses));
+            } catch (e) {
+                console.error('Error saving response:', e);
+            }
+        };
+
+        // Generate unique ID
+        const generateId = () => {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        };
+
+        function StarRating({ rating, onRatingChange, stacked = false }) {
+            const [hoverRating, setHoverRating] = useState(0);
+
+            return (
+                <div className={`star-rating ${stacked ? 'justify-center' : ''}`}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                            key={star}
+                            className={`star ${star <= (hoverRating || rating) ? 'filled' : ''}`}
+                            onClick={() => onRatingChange(star)}
+                            onMouseEnter={() => setHoverRating(star)}
+                            onMouseLeave={() => setHoverRating(0)}
+                        >
+                            ★
+                        </span>
+                    ))}
+                </div>
+            );
+        }
+
+        function App() {
+            const [currentView, setCurrentView] = useState('landing');
+            const [settings, setSettings] = useState(getSettings());
+            const [ratings, setRatings] = useState({});
+            const [feedback, setFeedback] = useState('');
+            const [averageRating, setAverageRating] = useState(0);
+            const [contactName, setContactName] = useState('');
+            const [contactPhone, setContactPhone] = useState('');
+            const [contactEmail, setContactEmail] = useState('');
+            const [contactSubmitted, setContactSubmitted] = useState(false);
+            const [staffMember, setStaffMember] = useState('');
+
+            // Load settings and URL params on mount
+            useEffect(() => {
+                const loadedSettings = getSettings();
+                setSettings(loadedSettings);
+                
+                // Initialize ratings based on questions
+                const initialRatings = {};
+                loadedSettings.questions.forEach(q => {
+                    initialRatings[q.key] = 0;
+                });
+                setRatings(initialRatings);
+
+                // Parse URL params for staff member
+                const urlParams = new URLSearchParams(window.location.search);
+                const staff = urlParams.get('staff');
+                if (staff) {
+                    setStaffMember(decodeURIComponent(staff));
+                }
+            }, []);
+
+            const handleRatingChange = (key, value) => {
+                setRatings(prev => ({
+                    ...prev,
+                    [key]: value
+                }));
+            };
+
+            const calculateAverage = () => {
+                const values = Object.values(ratings);
+                const sum = values.reduce((acc, val) => acc + val, 0);
+                return values.length > 0 ? sum / values.length : 0;
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                
+                const allRated = Object.values(ratings).every(rating => rating > 0);
+                
+                if (!allRated) {
+                    alert('Please rate all categories before submitting.');
+                    return;
+                }
+
+                const avg = calculateAverage();
+                setAverageRating(avg);
+
+                // Save response
+                const response = {
+                    id: generateId(),
+                    createdAt: new Date().toISOString(),
+                    venueName: settings.venueName,
+                    staffMember: staffMember || null,
+                    ratings: { ...ratings },
+                    averageRating: avg,
+                    feedbackText: feedback,
+                    contact: null,
+                    reviewEligible: avg >= settings.reviewThreshold
+                };
+                saveResponse(response);
+
+                if (avg >= settings.reviewThreshold) {
+                    setCurrentView('googlePrompt');
+                } else {
+                    setCurrentView('thankYou');
+                }
+            };
+
+            const handleGoogleReview = (accepted) => {
+                if (accepted) {
+                    if (feedback) {
+                        navigator.clipboard.writeText(feedback).catch(() => {});
+                    }
+                    window.open(settings.googleReviewUrl, '_blank');
+                }
+                setCurrentView('thankYou');
+            };
+
+            const handleContactSubmit = (e) => {
+                e.preventDefault();
+                
+                // Update the last response with contact info
+                try {
+                    const stored = localStorage.getItem('sos_responses');
+                    if (stored) {
+                        const responses = JSON.parse(stored);
+                        if (responses.length > 0) {
+                            responses[responses.length - 1].contact = {
+                                name: contactName || null,
+                                phone: contactPhone || null,
+                                email: contactEmail || null
+                            };
+                            localStorage.setItem('sos_responses', JSON.stringify(responses));
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error updating contact:', e);
+                }
+                
+                setContactSubmitted(true);
+            };
+
+            const resetForm = () => {
+                setCurrentView('landing');
+                const initialRatings = {};
+                settings.questions.forEach(q => {
+                    initialRatings[q.key] = 0;
+                });
+                setRatings(initialRatings);
+                setFeedback('');
+                setAverageRating(0);
+                setContactName('');
+                setContactPhone('');
+                setContactEmail('');
+                setContactSubmitted(false);
+            };
+
+            // Landing page
+            if (currentView === 'landing') {
+                return (
+                    <div className="container">
+                        <div className="card">
+                            <div className="logo-container">
+                                <img src="Sense_Of_Self.png" alt={settings.venueName} />
+                                <p className="tagline">Come as you are. Take what you need.</p>
+                            </div>
+                            
+                            {staffMember && (
+                                <div className="staff-badge">
+                                    <p className="staff-badge-label">You were welcomed by</p>
+                                    <p className="staff-badge-name">{staffMember}</p>
+                                    <p className="staff-badge-venue">{settings.venueName}</p>
+                                </div>
+                            )}
+
+                            <div className="wave-decoration">〰〰〰</div>
+
+                            <button
+                                onClick={() => setCurrentView('form')}
+                                className="btn btn-primary"
+                            >
+                                Share Your Experience
+                            </button>
+
+                            <p className="demo-note">
+                                Your feedback helps us create a better experience for all.
+                            </p>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Feedback form
+            if (currentView === 'form') {
+                const isLowRating = averageRating > 0 && averageRating < settings.reviewThreshold;
+                
+                return (
+                    <div className="container">
+                        <div className="card">
+                            <div className="form-header">
+                                <img src="Sense_Of_Self.png" alt={settings.venueName} style={{ maxWidth: '120px', marginBottom: '16px' }} />
+                                <h2>Thanks for soaking with us today</h2>
+                                <p>We'd love to know about your experience</p>
+                                {staffMember && (
+                                    <p className="staff-note">Welcomed by: {staffMember}</p>
+                                )}
+                            </div>
+
+                            <form onSubmit={handleSubmit}>
+                                <div className="ratings-section">
+                                    <p className="ratings-title">How would you rate:</p>
+                                    
+                                    {settings.questions.filter(q => !q.stacked).map((question) => (
+                                        <div key={question.key} className="rating-row">
+                                            <span className="rating-label">{question.label}</span>
+                                            <StarRating
+                                                rating={ratings[question.key] || 0}
+                                                onRatingChange={(value) => handleRatingChange(question.key, value)}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {settings.questions.filter(q => q.stacked).map((question) => (
+                                    <div key={question.key} className="rating-stacked">
+                                        <span className="rating-label">{question.label}</span>
+                                        <StarRating
+                                            rating={ratings[question.key] || 0}
+                                            onRatingChange={(value) => handleRatingChange(question.key, value)}
+                                            stacked={true}
+                                        />
+                                    </div>
+                                ))}
+
+                                <div className="feedback-section">
+                                    <label className="feedback-label">
+                                        Anything we can do to make your next soak even better?
+                                    </label>
+                                    <textarea
+                                        value={feedback}
+                                        onChange={(e) => setFeedback(e.target.value)}
+                                        rows="4"
+                                        className="feedback-textarea"
+                                        placeholder="Share your thoughts..."
+                                    />
+                                </div>
+
+                                <button type="submit" className="btn btn-primary">
+                                    Submit Feedback
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Google review prompt (for high ratings)
+            if (currentView === 'googlePrompt') {
+                return (
+                    <div className="container">
+                        <div className="card">
+                            <div className="result-icon">✨</div>
+                            <h2 className="result-title">Thanks for sharing</h2>
+                            <p className="result-text">
+                                We're so glad you enjoyed your time with us.
+                                <br /><br />
+                                <span className="result-highlight">
+                                    If you loved your soak today, a Google review really helps others discover us.
+                                </span>
+                                <br /><br />
+                                {feedback && "We'll copy your feedback to your clipboard — just paste it in."}
+                            </p>
+
+                            <div className="button-stack">
+                                <button
+                                    onClick={() => handleGoogleReview(true)}
+                                    className="btn btn-success"
+                                >
+                                    Leave a Google Review
+                                </button>
+                                <button
+                                    onClick={() => handleGoogleReview(false)}
+                                    className="btn btn-secondary"
+                                >
+                                    Maybe Later
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Thank you page
+            if (currentView === 'thankYou') {
+                return (
+                    <div className="container">
+                        <div className="card">
+                            <div className="result-icon">🙏</div>
+                            <h2 className="result-title">Thanks for sharing</h2>
+                            <p className="result-text">
+                                We read every note — your feedback helps us improve.
+                            </p>
+
+                            {!contactSubmitted ? (
+                                <form onSubmit={handleContactSubmit} className="contact-form">
+                                    <p style={{ fontSize: '0.9rem', color: 'var(--muted)', marginBottom: '16px', textAlign: 'center' }}>
+                                        If you'd like us to follow up, leave your details below.
+                                    </p>
+                                    
+                                    <div className="form-group">
+                                        <label>Name (optional)</label>
+                                        <input
+                                            type="text"
+                                            value={contactName}
+                                            onChange={(e) => setContactName(e.target.value)}
+                                            placeholder="Your name"
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Phone (optional)</label>
+                                        <input
+                                            type="tel"
+                                            value={contactPhone}
+                                            onChange={(e) => setContactPhone(e.target.value)}
+                                            placeholder="Your phone number"
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Email (optional)</label>
+                                        <input
+                                            type="email"
+                                            value={contactEmail}
+                                            onChange={(e) => setContactEmail(e.target.value)}
+                                            placeholder="Your email address"
+                                        />
+                                    </div>
+
+                                    <button type="submit" className="btn btn-primary">
+                                        Submit Details
+                                    </button>
+                                </form>
+                            ) : (
+                                <div className="success-message">
+                                    <p>Thank you — we'll be in touch soon.</p>
+                                </div>
+                            )}
+
+                            <div className="divider">
+                                <p className="return-note">
+                                    We hope to see you again soon at {settings.venueName}.
+                                </p>
+                                <button
+                                    onClick={resetForm}
+                                    className="btn btn-secondary"
+                                >
+                                    Submit Another Review
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

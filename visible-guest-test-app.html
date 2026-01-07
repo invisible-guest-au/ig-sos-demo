@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sense Of Self - Dashboard</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #E8E6E3;
+            --surface: #F5F4F2;
+            --surface-dark: #DFDDDC;
+            --text: #181513;
+            --text-muted: #6E6862;
+            --border: #C8C3BE;
+            --primary: #593327;
+            --primary-hover: #6B3D2E;
+            --secondary: #778988;
+            --focus: #CEB29F;
+            --accent: #593327;
+            --success: #5A7A6B;
+            --warning: #B8860B;
+            --danger: #A0522D;
+            --chart-1: #593327;
+            --chart-2: #5A7A6B;
+            --chart-3: #778988;
+            --chart-4: #CEB29F;
+            --chart-5: #B8860B;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        
+        h1, h2, h3, .serif {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .frank-logo img {
+            height: 22px;
+            width: auto;
+            opacity: 0.8;
+        }
+        
+        .venue-logo img {
+            height: 28px;
+            width: auto;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .nav-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: transparent;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-muted);
+        }
+        
+        .nav-btn:hover {
+            background: var(--surface-dark);
+            color: var(--text);
+        }
+        
+        .nav-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        
+        /* Main */
+        .main {
+            padding: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        /* Filters Bar */
+        .filters-bar {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: flex-end;
+            box-shadow: 0 2px 8px rgba(24, 21, 19, 0.06);
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .filter-group label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            padding: 10px 14px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.875rem;
+            min-width: 140px;
+        }
+        
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .filter-btn {
+            padding: 10px 24px;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            background: var(--primary-hover);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        @media (max-width: 1200px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 640px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+        
+        .stat-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 8px rgba(24, 21, 19, 0.06);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            line-height: 1;
+        }
+        
+        .stat-value.green { color: var(--success); }
+        .stat-value.teal { color: var(--secondary); }
+        .stat-value.dark { color: var(--text); }
+        
+        .stat-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+        
+        /* Two Column Layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        @media (max-width: 900px) {
+            .two-col { grid-template-columns: 1fr; }
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 8px rgba(24, 21, 19, 0.06);
+        }
+        
+        .card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+        
+        /* Bar Chart (CSS) */
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .bar-label {
+            width: 100px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        
+        .bar-track {
+            flex: 1;
+            height: 28px;
+            background: var(--surface-dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--focus) 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            min-width: 40px;
+        }
+        
+        .bar-value {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        /* Horizontal Bar for Top Performers */
+        .performer-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .performer-name {
+            width: 80px;
+            font-size: 0.85rem;
+            color: var(--text);
+            flex-shrink: 0;
+        }
+        
+        .performer-track {
+            flex: 1;
+            height: 24px;
+            background: var(--surface-dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .performer-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .performer-fill.gold { background: linear-gradient(90deg, var(--primary) 0%, var(--focus) 100%); }
+        .performer-fill.teal { background: linear-gradient(90deg, var(--secondary) 0%, #9AB5B4 100%); }
+        
+        .performer-score {
+            width: 45px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            text-align: right;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 16px;
+        }
+        
+        .chart-container.small {
+            height: 220px;
+        }
+        
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 16px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .data-table th {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            background: var(--surface-dark);
+        }
+        
+        .data-table tbody tr:hover {
+            background: var(--surface-dark);
+        }
+        
+        .rating-cell {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .rating-cell .star {
+            color: var(--primary);
+            font-size: 0.75rem;
+        }
+        
+        .overall-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .overall-badge.high {
+            background: rgba(90, 122, 107, 0.15);
+            color: var(--success);
+        }
+        
+        .overall-badge.medium {
+            background: rgba(184, 134, 11, 0.15);
+            color: var(--warning);
+        }
+        
+        .overall-badge.low {
+            background: rgba(160, 82, 45, 0.15);
+            color: var(--danger);
+        }
+        
+        /* Settings Styles */
+        .settings-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            background: #fff;
+            color: var(--text);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-group .hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .questions-editor {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            background: #fff;
+        }
+        
+        .question-edit-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .question-edit-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .question-edit-row input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: var(--surface);
+            color: var(--text);
+        }
+        
+        .question-edit-row .key-input {
+            flex: 0 0 120px;
+            font-family: monospace;
+            background: var(--bg);
+        }
+        
+        .question-edit-row .stacked-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+        
+        .btn-secondary {
+            background: var(--surface-dark);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+        
+        .btn-danger:hover {
+            background: #8B4513;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 24px;
+            border-radius: 8px;
+            background: var(--success);
+            color: #fff;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--text-muted);
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // Default settings
+        const DEFAULT_SETTINGS = {
+            venueName: 'Sense Of Self',
+            googleReviewUrl: 'https://search.google.com/local/writereview?placeid=ChIJ0x_WD-Np1moRNcXu8YsL8-w',
+            reviewThreshold: 4.0,
+            questions: [
+                { key: 'facilities', label: 'Facilities & ritual flow', stacked: false },
+                { key: 'cleanliness', label: 'Cleanliness & comfort', stacked: false },
+                { key: 'staff', label: 'Staff care & guidance', stacked: false },
+                { key: 'atmosphere', label: 'Atmosphere & ability to unwind', stacked: false },
+                { key: 'overall', label: 'Overall experience', stacked: true }
+            ]
+        };
+
+        const STAFF_MEMBERS = ['Emma', 'James', 'Sophie', 'Liam', 'Olivia', 'Noah'];
+        const SHIFTS = ['Morning', 'Afternoon', 'Evening'];
+
+        // Generate comprehensive mock data
+        const generateMockData = (settings) => {
+            const responses = [];
+            const now = new Date();
+            
+            const feedbacks = [
+                'Absolutely loved the cold plunge experience!',
+                'Staff were incredibly welcoming and helpful.',
+                'The atmosphere was so calming and peaceful.',
+                'Best spa experience I\'ve had in years.',
+                'The sauna was perfect temperature.',
+                'Would love slightly cooler changing rooms.',
+                'Beautiful space, will definitely return.',
+                'The hammam ritual was divine.',
+                'Felt truly relaxed for the first time in months.',
+                'Amazing facilities, very clean throughout.',
+                'The staff made me feel so welcome.',
+                'Perfect way to unwind after a busy week.',
+                'Love the minimal aesthetic and calm vibe.',
+                'The plunge pools were incredible.',
+                'Will definitely be bringing friends next time!',
+                '',
+                '',
+                '',
+                ''
+            ];
+            
+            // Generate 150 mock responses over the last 90 days
+            for (let i = 0; i < 150; i++) {
+                const daysAgo = Math.floor(Math.random() * 90);
+                const hoursAgo = Math.floor(Math.random() * 14) + 8; // 8am - 10pm
+                const date = new Date(now);
+                date.setDate(date.getDate() - daysAgo);
+                date.setHours(hoursAgo, Math.floor(Math.random() * 60), 0, 0);
+                
+                const ratings = {};
+                // Create slightly correlated ratings
+                const baseRating = Math.random();
+                settings.questions.forEach(q => {
+                    const variance = (Math.random() - 0.5) * 0.3;
+                    const score = baseRating + variance;
+                    if (score < 0.1) ratings[q.key] = 1;
+                    else if (score < 0.2) ratings[q.key] = 2;
+                    else if (score < 0.35) ratings[q.key] = 3;
+                    else if (score < 0.6) ratings[q.key] = 4;
+                    else ratings[q.key] = 5;
+                });
+                
+                const values = Object.values(ratings);
+                const avg = values.reduce((a, b) => a + b, 0) / values.length;
+                
+                // Determine shift based on hour
+                let shift;
+                if (hoursAgo < 12) shift = 'Morning';
+                else if (hoursAgo < 17) shift = 'Afternoon';
+                else shift = 'Evening';
+                
+                responses.push({
+                    id: `mock-${i}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    createdAt: date.toISOString(),
+                    venueName: settings.venueName,
+                    staffMember: STAFF_MEMBERS[Math.floor(Math.random() * STAFF_MEMBERS.length)],
+                    shift,
+                    ratings,
+                    averageRating: avg,
+                    feedbackText: Math.random() > 0.4 ? feedbacks[Math.floor(Math.random() * feedbacks.length)] : '',
+                    contact: Math.random() > 0.75 ? {
+                        name: ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley'][Math.floor(Math.random() * 6)],
+                        email: Math.random() > 0.5 ? 'guest@example.com' : null,
+                        phone: Math.random() > 0.5 ? '0400 000 000' : null
+                    } : null,
+                    reviewEligible: avg >= settings.reviewThreshold
+                });
+            }
+            
+            return responses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        };
+
+        // Storage functions
+        const getSettings = () => {
+            try {
+                const stored = localStorage.getItem('sos_settings');
+                if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+            } catch (e) {}
+            return DEFAULT_SETTINGS;
+        };
+
+        const saveSettings = (settings) => {
+            localStorage.setItem('sos_settings', JSON.stringify(settings));
+        };
+
+        const getResponses = () => {
+            try {
+                const stored = localStorage.getItem('sos_responses');
+                if (stored) return JSON.parse(stored);
+            } catch (e) {}
+            return [];
+        };
+
+        const saveResponses = (responses) => {
+            localStorage.setItem('sos_responses', JSON.stringify(responses));
+        };
+
+        // Chart Components
+        function TrendChart({ data, settings }) {
+            const canvasRef = useRef(null);
+            const chartRef = useRef(null);
+
+            useEffect(() => {
+                if (!canvasRef.current) return;
+
+                // Group data by date - last 30 days
+                const last30Days = [];
+                const now = new Date();
+                for (let i = 29; i >= 0; i--) {
+                    const date = new Date(now);
+                    date.setDate(date.getDate() - i);
+                    date.setHours(0, 0, 0, 0);
+                    last30Days.push(date.toISOString().split('T')[0]);
+                }
+
+                const dailyData = {};
+                last30Days.forEach(day => {
+                    dailyData[day] = { ratings: {}, count: 0 };
+                    settings.questions.forEach(q => {
+                        dailyData[day].ratings[q.key] = [];
+                    });
+                });
+
+                data.forEach(r => {
+                    const day = r.createdAt.split('T')[0];
+                    if (dailyData[day]) {
+                        dailyData[day].count++;
+                        settings.questions.forEach(q => {
+                            if (r.ratings[q.key]) {
+                                dailyData[day].ratings[q.key].push(r.ratings[q.key]);
+                            }
+                        });
+                    }
+                });
+
+                const labels = last30Days.map(d => {
+                    const date = new Date(d);
+                    return date.getDate().toString();
+                });
+
+                const questionsToShow = settings.questions.slice(0, 3);
+                const colors = ['#593327', '#5A7A6B', '#778988'];
+                
+                const datasets = questionsToShow.map((q, idx) => ({
+                    label: q.label.split(' ')[0],
+                    data: last30Days.map(day => {
+                        const vals = dailyData[day].ratings[q.key];
+                        return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+                    }),
+                    borderColor: colors[idx],
+                    backgroundColor: colors[idx] + '30',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    spanGaps: true,
+                }));
+
+                // Add overall line
+                const overallQ = settings.questions.find(q => q.key === 'overall');
+                if (overallQ) {
+                    datasets.push({
+                        label: 'Overall',
+                        data: last30Days.map(day => {
+                            const vals = dailyData[day].ratings['overall'];
+                            return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+                        }),
+                        borderColor: '#181513',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        spanGaps: true,
+                    });
+                }
+
+                if (chartRef.current) {
+                    chartRef.current.destroy();
+                }
+
+                chartRef.current = new Chart(canvasRef.current, {
+                    type: 'line',
+                    data: { labels, datasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            intersect: false,
+                            mode: 'index',
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: { 
+                                    color: '#6E6862', 
+                                    usePointStyle: true, 
+                                    padding: 20,
+                                    font: { family: 'DM Sans' }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { color: '#C8C3BE' },
+                                ticks: { color: '#6E6862', font: { family: 'DM Sans' } }
+                            },
+                            y: {
+                                min: 0,
+                                max: 5,
+                                grid: { color: '#C8C3BE' },
+                                ticks: { color: '#6E6862', stepSize: 1, font: { family: 'DM Sans' } }
+                            }
+                        }
+                    }
+                });
+
+                return () => {
+                    if (chartRef.current) chartRef.current.destroy();
+                };
+            }, [data, settings]);
+
+            return <canvas ref={canvasRef} />;
+        }
+
+        function DonutChart({ data }) {
+            const canvasRef = useRef(null);
+            const chartRef = useRef(null);
+
+            useEffect(() => {
+                if (!canvasRef.current) return;
+
+                const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+                data.forEach(r => {
+                    const rounded = Math.round(r.averageRating);
+                    if (distribution[rounded] !== undefined) {
+                        distribution[rounded]++;
+                    }
+                });
+
+                if (chartRef.current) {
+                    chartRef.current.destroy();
+                }
+
+                chartRef.current = new Chart(canvasRef.current, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['5 Stars', '4 Stars', '3 Stars', '2 Stars', '1 Star'],
+                        datasets: [{
+                            data: [distribution[5], distribution[4], distribution[3], distribution[2], distribution[1]],
+                            backgroundColor: ['#5A7A6B', '#778988', '#CEB29F', '#B8860B', '#A0522D'],
+                            borderWidth: 0,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'right',
+                                labels: { 
+                                    color: '#6E6862', 
+                                    padding: 12,
+                                    font: { family: 'DM Sans' }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                return () => {
+                    if (chartRef.current) chartRef.current.destroy();
+                };
+            }, [data]);
+
+            return <canvas ref={canvasRef} />;
+        }
+
+        function ShiftChart({ data }) {
+            const canvasRef = useRef(null);
+            const chartRef = useRef(null);
+
+            useEffect(() => {
+                if (!canvasRef.current) return;
+
+                // Count responses by shift
+                const shiftCounts = { Morning: 0, Afternoon: 0, Evening: 0 };
+                data.forEach(r => {
+                    if (r.shift && shiftCounts.hasOwnProperty(r.shift)) {
+                        shiftCounts[r.shift]++;
+                    }
+                });
+
+                if (chartRef.current) {
+                    chartRef.current.destroy();
+                }
+
+                chartRef.current = new Chart(canvasRef.current, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Morning', 'Afternoon', 'Evening'],
+                        datasets: [{
+                            label: 'Responses',
+                            data: [shiftCounts.Morning, shiftCounts.Afternoon, shiftCounts.Evening],
+                            backgroundColor: ['#CEB29F', '#778988', '#593327'],
+                            borderRadius: 6,
+                            barThickness: 60,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: '#6E6862', font: { family: 'DM Sans' } }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: '#C8C3BE' },
+                                ticks: { color: '#6E6862', font: { family: 'DM Sans' } }
+                            }
+                        }
+                    }
+                });
+
+                return () => {
+                    if (chartRef.current) chartRef.current.destroy();
+                };
+            }, [data]);
+
+            return <canvas ref={canvasRef} />;
+        }
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('dashboard');
+            const [settings, setSettings] = useState(getSettings());
+            const [responses, setResponses] = useState([]);
+            const [toast, setToast] = useState(null);
+            
+            // Filters
+            const [filterStaff, setFilterStaff] = useState('all');
+            const [filterDateFrom, setFilterDateFrom] = useState('');
+            const [filterDateTo, setFilterDateTo] = useState('');
+            const [filterShift, setFilterShift] = useState('all');
+
+            useEffect(() => {
+                const loadedSettings = getSettings();
+                setSettings(loadedSettings);
+                
+                let loadedResponses = getResponses();
+                if (loadedResponses.length === 0) {
+                    loadedResponses = generateMockData(loadedSettings);
+                    saveResponses(loadedResponses);
+                }
+                setResponses(loadedResponses);
+
+                // Set default date range (last 30 days)
+                const now = new Date();
+                const thirtyDaysAgo = new Date(now);
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                setFilterDateFrom(thirtyDaysAgo.toISOString().split('T')[0]);
+                setFilterDateTo(now.toISOString().split('T')[0]);
+            }, []);
+
+            // Filter responses
+            const filteredResponses = useMemo(() => {
+                return responses.filter(r => {
+                    if (filterStaff !== 'all' && r.staffMember !== filterStaff) return false;
+                    if (filterShift !== 'all' && r.shift !== filterShift) return false;
+                    
+                    const date = new Date(r.createdAt);
+                    if (filterDateFrom) {
+                        const from = new Date(filterDateFrom);
+                        from.setHours(0, 0, 0, 0);
+                        if (date < from) return false;
+                    }
+                    if (filterDateTo) {
+                        const to = new Date(filterDateTo);
+                        to.setHours(23, 59, 59, 999);
+                        if (date > to) return false;
+                    }
+                    
+                    return true;
+                });
+            }, [responses, filterStaff, filterDateFrom, filterDateTo, filterShift]);
+
+            // Calculate stats
+            const stats = useMemo(() => {
+                if (filteredResponses.length === 0) {
+                    return {
+                        totalResponses: 0,
+                        averageRating: 0,
+                        reviewEligibleCount: 0,
+                        reviewEligiblePercent: 0,
+                        questionAverages: {},
+                        staffPerformance: [],
+                        avgResponsesPerStaff: 0
+                    };
+                }
+
+                const avgRating = filteredResponses.reduce((sum, r) => sum + r.averageRating, 0) / filteredResponses.length;
+                const reviewEligible = filteredResponses.filter(r => r.reviewEligible).length;
+                
+                const questionAverages = {};
+                settings.questions.forEach(q => {
+                    const values = filteredResponses
+                        .map(r => r.ratings[q.key])
+                        .filter(v => v !== undefined && v !== null);
+                    questionAverages[q.key] = values.length > 0 
+                        ? values.reduce((a, b) => a + b, 0) / values.length 
+                        : 0;
+                });
+
+                // Staff performance
+                const staffStats = {};
+                filteredResponses.forEach(r => {
+                    if (r.staffMember) {
+                        if (!staffStats[r.staffMember]) {
+                            staffStats[r.staffMember] = { total: 0, count: 0 };
+                        }
+                        staffStats[r.staffMember].total += r.averageRating;
+                        staffStats[r.staffMember].count++;
+                    }
+                });
+
+                const staffPerformance = Object.entries(staffStats)
+                    .map(([name, data]) => ({
+                        name,
+                        average: data.total / data.count,
+                        responses: data.count
+                    }))
+                    .sort((a, b) => b.average - a.average);
+
+                const uniqueStaff = new Set(filteredResponses.map(r => r.staffMember).filter(Boolean));
+                const avgResponsesPerStaff = uniqueStaff.size > 0 
+                    ? filteredResponses.length / uniqueStaff.size 
+                    : 0;
+
+                return {
+                    totalResponses: filteredResponses.length,
+                    averageRating: avgRating,
+                    reviewEligibleCount: reviewEligible,
+                    reviewEligiblePercent: (reviewEligible / filteredResponses.length) * 100,
+                    questionAverages,
+                    staffPerformance,
+                    avgResponsesPerStaff
+                };
+            }, [filteredResponses, settings.questions]);
+
+            const showToast = (message) => {
+                setToast(message);
+                setTimeout(() => setToast(null), 3000);
+            };
+
+            const handleSaveSettings = () => {
+                saveSettings(settings);
+                showToast('Settings saved!');
+            };
+
+            const handleResetData = () => {
+                if (window.confirm('Reset all demo data with new mock responses?')) {
+                    const newResponses = generateMockData(settings);
+                    saveResponses(newResponses);
+                    setResponses(newResponses);
+                    showToast('Demo data reset!');
+                }
+            };
+
+            const handleClearData = () => {
+                if (window.confirm('Clear ALL response data? This cannot be undone.')) {
+                    saveResponses([]);
+                    setResponses([]);
+                    showToast('All data cleared!');
+                }
+            };
+
+            const handleExportCSV = () => {
+                const headers = ['Date', 'Staff', 'Shift', 'Average', ...settings.questions.map(q => q.label), 'Feedback', 'Contact Name', 'Contact Email', 'Contact Phone', 'Review Eligible'];
+                
+                const rows = filteredResponses.map(r => [
+                    new Date(r.createdAt).toLocaleString(),
+                    r.staffMember || '',
+                    r.shift || '',
+                    r.averageRating.toFixed(2),
+                    ...settings.questions.map(q => r.ratings[q.key] || ''),
+                    `"${(r.feedbackText || '').replace(/"/g, '""')}"`,
+                    r.contact?.name || '',
+                    r.contact?.email || '',
+                    r.contact?.phone || '',
+                    r.reviewEligible ? 'Yes' : 'No'
+                ]);
+
+                const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sos-feedback-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('CSV exported!');
+            };
+
+            const updateQuestion = (index, field, value) => {
+                const newQuestions = [...settings.questions];
+                newQuestions[index] = { ...newQuestions[index], [field]: value };
+                setSettings({ ...settings, questions: newQuestions });
+            };
+
+            const formatDate = (isoString) => {
+                return new Date(isoString).toLocaleDateString('en-AU', { 
+                    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                });
+            };
+
+            const getRatingBadgeClass = (rating) => {
+                if (rating >= 4) return 'high';
+                if (rating >= 3) return 'medium';
+                return 'low';
+            };
+
+            const uniqueStaffInData = [...new Set(responses.map(r => r.staffMember).filter(Boolean))].sort();
+
+            return (
+                <div>
+                    <header className="header">
+                        <div className="header-left">
+                            <a href="https://frankpr.co" target="_blank" rel="noopener" className="frank-logo">
+                                <img src="Frank_Custom.png" alt="Frank" />
+                            </a>
+                            <div className="venue-logo">
+                                <img src="Sense_Of_Self.png" alt={settings.venueName} />
+                            </div>
+                        </div>
+                        <nav className="header-nav">
+                            <button className={`nav-btn ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>Dashboard</button>
+                            <button className={`nav-btn ${activeTab === 'responses' ? 'active' : ''}`} onClick={() => setActiveTab('responses')}>Responses</button>
+                            <button className={`nav-btn ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => setActiveTab('settings')}>Settings</button>
+                        </nav>
+                    </header>
+
+                    <main className="main">
+                        {/* Dashboard */}
+                        {activeTab === 'dashboard' && (
+                            <>
+                                {/* Filters */}
+                                <div className="filters-bar">
+                                    <div className="filter-group">
+                                        <label>Staff</label>
+                                        <select value={filterStaff} onChange={(e) => setFilterStaff(e.target.value)}>
+                                            <option value="all">All Staff</option>
+                                            {uniqueStaffInData.map(s => <option key={s} value={s}>{s}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="filter-group">
+                                        <label>Date From</label>
+                                        <input type="date" value={filterDateFrom} onChange={(e) => setFilterDateFrom(e.target.value)} />
+                                    </div>
+                                    <div className="filter-group">
+                                        <label>Date To</label>
+                                        <input type="date" value={filterDateTo} onChange={(e) => setFilterDateTo(e.target.value)} />
+                                    </div>
+                                    <div className="filter-group">
+                                        <label>Shift</label>
+                                        <select value={filterShift} onChange={(e) => setFilterShift(e.target.value)}>
+                                            <option value="all">All Shifts</option>
+                                            {SHIFTS.map(s => <option key={s} value={s}>{s}</option>)}
+                                        </select>
+                                    </div>
+                                    <button className="filter-btn" onClick={() => {}}>Apply Filters</button>
+                                </div>
+
+                                {/* Stats */}
+                                <div className="stats-grid">
+                                    <div className="stat-card">
+                                        <div className="stat-label">Team Average Rating</div>
+                                        <div className="stat-value">{stats.averageRating.toFixed(2)}</div>
+                                        <div className="stat-subtitle">Based on {stats.totalResponses} responses</div>
+                                    </div>
+                                    <div className="stat-card">
+                                        <div className="stat-label">Total Responses</div>
+                                        <div className="stat-value dark">{stats.totalResponses}</div>
+                                        <div className="stat-subtitle">For selected period</div>
+                                    </div>
+                                    <div className="stat-card">
+                                        <div className="stat-label">Google Reviews Generated</div>
+                                        <div className="stat-value green">{stats.reviewEligibleCount}</div>
+                                        <div className="stat-subtitle">{stats.reviewEligiblePercent.toFixed(0)}% conversion rate</div>
+                                    </div>
+                                    <div className="stat-card">
+                                        <div className="stat-label">Avg Responses per Staff</div>
+                                        <div className="stat-value teal">{stats.avgResponsesPerStaff.toFixed(1)}</div>
+                                        <div className="stat-subtitle">{uniqueStaffInData.length} active staff</div>
+                                    </div>
+                                </div>
+
+                                {/* Charts Row 1 */}
+                                <div className="two-col">
+                                    <div className="card">
+                                        <h3 className="card-title">Average Ratings by Category</h3>
+                                        <div className="bar-chart">
+                                            {settings.questions.map(q => (
+                                                <div key={q.key} className="bar-row">
+                                                    <span className="bar-label">{q.label.split(' ')[0]}</span>
+                                                    <div className="bar-track">
+                                                        <div className="bar-fill" style={{ width: `${(stats.questionAverages[q.key] || 0) / 5 * 100}%` }}>
+                                                            <span className="bar-value">{(stats.questionAverages[q.key] || 0).toFixed(1)}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="card">
+                                        <h3 className="card-title">Top Performers</h3>
+                                        {stats.staffPerformance.slice(0, 6).map((staff, idx) => (
+                                            <div key={staff.name} className="performer-bar">
+                                                <span className="performer-name">{staff.name}</span>
+                                                <div className="performer-track">
+                                                    <div 
+                                                        className={`performer-fill ${idx === 0 ? 'gold' : 'teal'}`}
+                                                        style={{ width: `${(staff.average / 5) * 100}%` }}
+                                                    />
+                                                </div>
+                                                <span className="performer-score">{staff.average.toFixed(2)}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Trend Chart */}
+                                <div className="card" style={{ marginBottom: '24px' }}>
+                                    <h3 className="card-title">Rating Trends (Last 30 Days)</h3>
+                                    <div className="chart-container">
+                                        <TrendChart data={filteredResponses} settings={settings} />
+                                    </div>
+                                </div>
+
+                                {/* Charts Row 2 */}
+                                <div className="two-col">
+                                    <div className="card">
+                                        <h3 className="card-title">Ratings Distribution</h3>
+                                        <div className="chart-container small">
+                                            <DonutChart data={filteredResponses} />
+                                        </div>
+                                    </div>
+                                    <div className="card">
+                                        <h3 className="card-title">Response Rate by Shift</h3>
+                                        <div className="chart-container small">
+                                            <ShiftChart data={filteredResponses} />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Staff Performance Table */}
+                                <div className="card">
+                                    <h3 className="card-title">Staff Performance Details</h3>
+                                    <div className="table-container">
+                                        <table className="data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    {settings.questions.map(q => (
+                                                        <th key={q.key}>{q.label.split(' ')[0]}</th>
+                                                    ))}
+                                                    <th>Responses</th>
+                                                    <th>Overall</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {stats.staffPerformance.map(staff => {
+                                                    const staffResponses = filteredResponses.filter(r => r.staffMember === staff.name);
+                                                    const questionAvgs = {};
+                                                    settings.questions.forEach(q => {
+                                                        const vals = staffResponses.map(r => r.ratings[q.key]).filter(v => v);
+                                                        questionAvgs[q.key] = vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+                                                    });
+                                                    
+                                                    return (
+                                                        <tr key={staff.name}>
+                                                            <td>{staff.name}</td>
+                                                            {settings.questions.map(q => (
+                                                                <td key={q.key}>
+                                                                    <span className="rating-cell">
+                                                                        {questionAvgs[q.key].toFixed(1)} <span className="star">★</span>
+                                                                    </span>
+                                                                </td>
+                                                            ))}
+                                                            <td>{staff.responses}</td>
+                                                            <td>
+                                                                <span className={`overall-badge ${getRatingBadgeClass(staff.average)}`}>
+                                                                    {staff.average.toFixed(2)} ★
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+
+                        {/* Responses */}
+                        {activeTab === 'responses' && (
+                            <>
+                                <div className="filters-bar">
+                                    <div className="filter-group">
+                                        <label>Staff</label>
+                                        <select value={filterStaff} onChange={(e) => setFilterStaff(e.target.value)}>
+                                            <option value="all">All Staff</option>
+                                            {uniqueStaffInData.map(s => <option key={s} value={s}>{s}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="filter-group">
+                                        <label>Date From</label>
+                                        <input type="date" value={filterDateFrom} onChange={(e) => setFilterDateFrom(e.target.value)} />
+                                    </div>
+                                    <div className="filter-group">
+                                        <label>Date To</label>
+                                        <input type="date" value={filterDateTo} onChange={(e) => setFilterDateTo(e.target.value)} />
+                                    </div>
+                                    <div className="filter-group">
+                                        <label>Shift</label>
+                                        <select value={filterShift} onChange={(e) => setFilterShift(e.target.value)}>
+                                            <option value="all">All Shifts</option>
+                                            {SHIFTS.map(s => <option key={s} value={s}>{s}</option>)}
+                                        </select>
+                                    </div>
+                                    <button className="filter-btn" onClick={handleExportCSV}>Export CSV</button>
+                                </div>
+
+                                <div className="card">
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                        <h3 className="card-title" style={{ marginBottom: 0 }}>{filteredResponses.length} Responses</h3>
+                                    </div>
+
+                                    {filteredResponses.length === 0 ? (
+                                        <div className="empty-state">
+                                            <div className="empty-state-icon">📭</div>
+                                            <p>No responses found for the selected filters.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="table-container">
+                                            <table className="data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Staff</th>
+                                                        <th>Shift</th>
+                                                        <th>Avg</th>
+                                                        {settings.questions.slice(0, 4).map(q => (
+                                                            <th key={q.key}>{q.label.split(' ')[0]}</th>
+                                                        ))}
+                                                        <th>Feedback</th>
+                                                        <th>Contact</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {filteredResponses.slice(0, 100).map(r => (
+                                                        <tr key={r.id}>
+                                                            <td>{formatDate(r.createdAt)}</td>
+                                                            <td>{r.staffMember || '—'}</td>
+                                                            <td>{r.shift || '—'}</td>
+                                                            <td>
+                                                                <span className={`overall-badge ${getRatingBadgeClass(r.averageRating)}`}>
+                                                                    {r.averageRating.toFixed(1)}
+                                                                </span>
+                                                            </td>
+                                                            {settings.questions.slice(0, 4).map(q => (
+                                                                <td key={q.key}>
+                                                                    <span className="rating-cell">
+                                                                        {r.ratings[q.key] || '—'} {r.ratings[q.key] && <span className="star">★</span>}
+                                                                    </span>
+                                                                </td>
+                                                            ))}
+                                                            <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                                {r.feedbackText || '—'}
+                                                            </td>
+                                                            <td>{r.contact ? '✓' : '—'}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        )}
+
+                        {/* Settings */}
+                        {activeTab === 'settings' && (
+                            <>
+                                <div className="card" style={{ marginBottom: '24px' }}>
+                                    <h3 className="card-title">Venue Settings</h3>
+                                    <div className="settings-grid">
+                                        <div className="form-group">
+                                            <label>Venue Name</label>
+                                            <input 
+                                                type="text"
+                                                value={settings.venueName}
+                                                onChange={(e) => setSettings({ ...settings, venueName: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Google Review URL</label>
+                                            <input 
+                                                type="text"
+                                                value={settings.googleReviewUrl}
+                                                onChange={(e) => setSettings({ ...settings, googleReviewUrl: e.target.value })}
+                                            />
+                                            <span className="hint">Direct write-review link from Google Business Profile</span>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Review Threshold (stars)</label>
+                                            <input 
+                                                type="number"
+                                                min="1"
+                                                max="5"
+                                                step="0.5"
+                                                value={settings.reviewThreshold}
+                                                onChange={(e) => setSettings({ ...settings, reviewThreshold: parseFloat(e.target.value) })}
+                                            />
+                                            <span className="hint">Guests at or above this rating will be prompted for a Google review</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="card" style={{ marginBottom: '24px' }}>
+                                    <h3 className="card-title">Rating Questions</h3>
+                                    <div className="questions-editor">
+                                        {settings.questions.map((q, index) => (
+                                            <div key={index} className="question-edit-row">
+                                                <input 
+                                                    type="text"
+                                                    value={q.label}
+                                                    onChange={(e) => updateQuestion(index, 'label', e.target.value)}
+                                                    placeholder="Question label"
+                                                />
+                                                <input 
+                                                    type="text"
+                                                    className="key-input"
+                                                    value={q.key}
+                                                    onChange={(e) => updateQuestion(index, 'key', e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))}
+                                                    placeholder="key"
+                                                />
+                                                <label className="stacked-toggle">
+                                                    <input 
+                                                        type="checkbox"
+                                                        checked={q.stacked || false}
+                                                        onChange={(e) => updateQuestion(index, 'stacked', e.target.checked)}
+                                                    />
+                                                    Stacked
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="hint" style={{ marginTop: '12px' }}>
+                                        "Stacked" questions display centered with label above stars.
+                                    </p>
+                                </div>
+
+                                <div className="card" style={{ marginBottom: '24px' }}>
+                                    <h3 className="card-title">Data Management</h3>
+                                    <div className="btn-group">
+                                        <button className="btn btn-secondary" onClick={handleResetData}>Reset Demo Data</button>
+                                        <button className="btn btn-danger" onClick={handleClearData}>Clear All Data</button>
+                                    </div>
+                                    <p className="hint" style={{ marginTop: '12px' }}>
+                                        "Reset Demo Data" generates new mock responses. "Clear All Data" removes everything.
+                                    </p>
+                                </div>
+
+                                <button className="btn btn-primary" onClick={handleSaveSettings}>Save Settings</button>
+                            </>
+                        )}
+                    </main>
+
+                    {toast && <div className="toast">{toast}</div>}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
