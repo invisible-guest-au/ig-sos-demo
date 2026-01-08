@@ -1148,6 +1148,11 @@
                                 <img src="./assets/Frank_Custom.png" alt="Frank" />
                             </a>
                         </div>
+
+                        <div className="header-center">
+                            <img src="./assets/Sense_Of_Self.png" alt={settings.venueName} style={{ height: '80px', width: 'auto' }} />    
+                        </div>
+                        
                         <nav className="header-nav">
                             <button className={`nav-btn ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>Dashboard</button>
                             <button className={`nav-btn ${activeTab === 'responses' ? 'active' : ''}`} onClick={() => setActiveTab('responses')}>Responses</button>
@@ -1156,10 +1161,6 @@
                     </header>
 
                     <main className="main">
-                        {/* Centered Logo */}
-                        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                            <img src="./assets/Sense_Of_Self.png" alt={settings.venueName} style={{ height: '80px', width: 'auto' }} />
-                        </div>
                         {/* Dashboard */}
                         {activeTab === 'dashboard' && (
                             <>
